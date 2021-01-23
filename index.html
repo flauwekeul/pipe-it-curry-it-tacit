@@ -8,10 +8,30 @@
 
     <link rel="stylesheet" href="dist/reset.css" />
     <link rel="stylesheet" href="dist/reveal.css" />
-    <link rel="stylesheet" href="dist/theme/night.css" id="theme" />
+    <link rel="stylesheet" href="dist/theme/blood.css" id="theme" />
 
     <!-- Theme used for syntax highlighted code -->
     <link rel="stylesheet" href="plugin/highlight/monokai.css" id="highlight-theme" />
+
+    <style>
+      .gradient-bar {
+        width: 100%;
+        height: 5vmin;
+        background: linear-gradient(120deg, rgb(255, 0, 84) 0%, rgb(0, 255, 229) 100%);
+        transform: skewX(-30deg);
+        border-radius: 5px;
+      }
+      .gradient-indicator {
+        position: absolute;
+        bottom: -9vmin;
+        left: 0;
+        font-size: 10vmin;
+        transform: translateX(-50%);
+        opacity: 0;
+        text-shadow: 0 0 1vmin rgba(255, 255, 255, 0.5);
+        transition: all 600ms ease-in-out;
+      }
+    </style>
   </head>
   <body>
     <div class="reveal">
@@ -26,13 +46,107 @@
           </section>
 
           <section>
-            <img src="assets/logo-frontmen.svg" style="height: 25vh" />
+            <img src="assets/logo-frontmen.svg" style="height: 25vmin" />
             <h3>
-              <img src="assets/avatar.svg" style="height: 8vh; margin: 0; vertical-align: text-bottom" />
+              <img src="assets/avatar.svg" style="height: 8vmin; margin: 0; vertical-align: text-bottom" />
               Abbe Keultjes
             </h3>
             <p>abbe.keultjes@frontmen.nl</p>
           </section>
+        </section>
+
+        <section>
+          <section>
+            <!--
+              Why functional programming?
+              * Gradient: imperative (Progress language?) to declarative (Haskell, Fantasy Land Spec)
+              * "Familiarity can be acquired; complexity is intrinsic." (https://sanctuary.js.org/#section:currying)
+             -->
+            <h3>More declarative</h3>
+            <div id="gradient-bar" class="fragment" style="position: relative; margin-bottom: 10vmin">
+              <div style="display: flex; justify-content: space-between">
+                <span style="margin-bottom: 1.5rem">Imperative</span>
+                <span style="margin-bottom: 1.5rem">Declarative</span>
+              </div>
+              <div class="gradient-bar"></div>
+              <div class="gradient-indicator">⬆</div>
+            </div>
+            <pre class="fragment" data-indicator-left="3%"><code data-trim>
+              const charCodes = [115, 104, 105, 116]
+              let result = ''
+
+              for (let i = 0; i < charCodes.length; i++) {
+                const charCode = charCodes[i]
+                result += String.fromCharCode(charCode)
+              }
+
+              result // 'shit'
+            </code></pre>
+          </section>
+          <!--
+            Assumptions:
+            * JavaScript syntax
+            * Functions are first-class:
+              * store in a variable
+              * pass as argument
+              * return from function (higher order functions)
+            * Pure functions (controlled side-effects)?
+           -->
+        </section>
+
+        <section>
+          <!--
+            Pass a value through multiple functions
+            Compose
+            Pipe
+            Pipeline operator?
+           -->
+        </section>
+
+        <section>
+          <!--
+            What's currying? (uses closures) (inventor: Haskell Curry)
+            Why currying? Reusability and readability (Angular animation example, RxJS?)
+            Difference with partial application
+            Ramda mixes currying with partial application
+            https://blog.bitsrc.io/understanding-currying-in-javascript-ceb2188c339
+           -->
+        </section>
+
+        <section>
+          <!--
+            Tacit (point-free) programming: explicitly referred arguments ("points")
+            ```
+            const getName = (person) => person.name
+            const people = [{ name: 'Hank' }, ...]
+            people.map((person) => getName(person))
+
+            // point-free:
+            people.map(getName)
+            ```
+            This doesn't always work (e.g. Number.parseInt())
+            Pipe() is already point-free
+            Using `this` makes it harder to be point-free
+            https://medium.com/dailyjs/functional-js-7-point-free-style-b21a1416ac6a
+           -->
+        </section>
+
+        <section>
+          <!--
+            Libs:
+            * Ramda.js
+            * Rambda https://selfrefactor.github.io/rambda/#/
+            * Lodash FP?
+            * https://sanctuary.js.org/
+            * https://folktale.origamitower.com/ (more OO)
+            * https://www.purescript.org/
+            Further reading:
+            * https://medium.com/dailyjs/functional-js-1-introduction-7908bfe5ef8d
+            * https://project-awesome.org/stoeffel/awesome-fp-js
+            * https://en.wikipedia.org/wiki/Tacit_programming
+            Future subjects:
+            * combinators
+           -->
         </section>
       </div>
     </div>
@@ -51,6 +165,51 @@
         // Learn about plugins: https://revealjs.com/plugins/
         plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
       })
+
+      const log = (val) => {
+        console.log(val)
+        return val
+      }
+      const filter = (fn) => (array) => array.filter(fn)
+      const map = (fn) => (array) => array.map(fn)
+      const some = (fn) => (array) => array.some(fn)
+      const pipe = (...fns) => (val) => fns.reduce((acc, fn) => fn(acc), val)
+      const last = (list) => list[list.length - 1]
+      const getDataFor = (key) => (el) => el.dataset[key]
+      const isVisible = (el) => el.classList.contains('visible')
+      const setStyle = (el) => (prop) => (value) => (el.style[prop] = value)
+
+      const gradientBar = document.getElementById('gradient-bar')
+      const gradientIndicator = document.getElementsByClassName('gradient-indicator')[0]
+      const codeSnippets = document.querySelectorAll('[data-indicator-left]')
+      const getGradientValue = getDataFor('indicatorLeft')
+      const setIndicatorStyle = setStyle(gradientIndicator)
+      const setIndicatorStyleLeft = pipe(
+        Array.from,
+        filter(isVisible),
+        map(getGradientValue),
+        last,
+        setIndicatorStyle('left')
+      )
+      const areSomeVisible = pipe(Array.from, some(isVisible))
+
+      const fragmentShown = () => {
+        if (!areSomeVisible(codeSnippets)) {
+          return
+        }
+        setIndicatorStyle('opacity')(1)
+        setIndicatorStyleLeft(codeSnippets)
+      }
+      const fragmentHidden = () => {
+        if (!isVisible(gradientBar)) {
+          return
+        }
+        setIndicatorStyle('left')(0)
+        setIndicatorStyle('opacity')(0)
+      }
+
+      Reveal.on('fragmentshown', fragmentShown)
+      Reveal.on('fragmenthidden', fragmentHidden)
     </script>
   </body>
 </html>
