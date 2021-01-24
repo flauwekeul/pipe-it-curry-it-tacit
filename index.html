@@ -19,8 +19,9 @@
       }
 
       cite {
-        display: block;
-        font-size: 2vmin;
+        display: inline-block;
+        font-size: 0.5em;
+        font-style: italic;
       }
 
       .gradient-text {
@@ -46,11 +47,6 @@
         opacity: 0;
         text-shadow: 0 0 1vmin rgba(255, 255, 255, 0.5);
         transition: all 600ms ease-in-out;
-      }
-
-      /* override */
-      .fragment.fade-in-then-out:not(.current-fragment) {
-        display: none;
       }
     </style>
   </head>
@@ -87,7 +83,7 @@
               <div class="gradient-bar"></div>
               <div class="gradient-indicator">⬆</div>
             </div>
-            <pre class="fragment fade-in-then-out" data-indicator-left="5%"><code class="js" data-trim>
+            <pre class="fragment fade-in-then-out" data-indicator-left="5%"><code class="ts" data-trim>
               const charCodes = [115, null, 104, 105, 116]
               let result = ''
 
@@ -101,7 +97,7 @@
 
               result // 'shit'
             </code></pre>
-            <pre class="fragment fade-in-then-out" data-indicator-left="40%"><code class="js" data-trim>
+            <pre class="fragment fade-in-then-out" data-indicator-left="40%"><code class="ts" data-trim>
               const charCodes = [98, 101, 116, 116, 101, null, 114]
               const result = charCodes
                 .filter((charCode) => charCode)
@@ -110,7 +106,7 @@
 
               result // 'better'
             </code></pre>
-            <pre class="fragment fade-in-then-out" data-indicator-left="75%"><code class="js" data-trim>
+            <pre class="fragment fade-in-then-out" data-indicator-left="75%"><code class="ts" data-trim>
               const charCodes = [98, 101, null, 115, 116]
               const makeWord = pipe(
                 reject(isNil),
@@ -120,7 +116,7 @@
 
               makeWord(charCodes) // 'best'
             </code></pre>
-            <pre class="fragment fade-in-then-out" data-indicator-left="95%"><code class="js" data-trim>
+            <pre class="fragment fade-in-then-out" data-indicator-left="95%"><code class="ts" data-trim>
               const incCount = ifElse(
                 has('count'),
                 over(lensProp('count'), inc),
@@ -129,14 +125,16 @@
               incCount({})            // { count: 1 }
               incCount({ count: 1 })  // { count: 2 }
             </code></pre>
-
-            <blockquote class="fragment fade-in-then-out">
-              “Familiarity can be acquired; complexity is intrinsic.”
-              <cite><a href="https://sanctuary.js.org/#section:currying" target="_blank">sanctuary.js</a></cite>
-            </blockquote>
           </section>
+
           <section>
-            <!-- todo: remove this slide? -->
+            <h2 class="r-fit-text">
+              Familiarity can be acquired;<br />complexity is intrinsic.
+              <cite><a href="https://sanctuary.js.org/#section:currying" target="_blank">sanctuary.js</a></cite>
+            </h2>
+          </section>
+
+          <!-- <section>
             <h3>Assumptions</h3>
             <ul>
               <li class="fragment">
@@ -144,13 +142,13 @@
                 <ul>
                   <li class="fragment">
                     …stored in a variable
-                    <pre><code class="js" data-trim>
+                    <pre><code class="ts" data-trim>
                       const fn = () => { … }
                     </code></pre>
                   </li>
                   <li class="fragment">
                     …passed as an argument
-                    <pre><code class="js" data-trim>
+                    <pre><code class="ts" data-trim>
                       const fn = (callback) => {
                         …
                         callback()
@@ -159,60 +157,168 @@
                   </li>
                   <li class="fragment">
                     …returned from a function
-                    <pre class="fragment fade-in-then-out"><code class="js" data-trim>
+                    <pre class="fragment fade-in-then-out"><code class="ts" data-trim>
                       const fn = () => {
                         return () => { … }
                       }
                     </code></pre>
-                    <pre class="fragment"><code class="js" data-trim>
+                    <pre class="fragment"><code class="ts" data-trim>
                       const fn = () => () => { … }
                     </code></pre>
                   </li>
                 </ul>
               </li>
             </ul>
+          </section> -->
+        </section>
+
+        <section>
+          <section>
+            <h3>Equine alchemy</h3>
+            <pre class="fragment"><code class="ts" data-trim data-line-numbers="1,5|1-2,5|1-3,5|1-5|all">
+              const toUnicorn = (horse) => {
+                const whiteHorse = paint(🥛, horse)
+                const hornedWhiteHorse = attach(🐚, whiteHorse)
+                return feed(🌈, ✨, hornedWhiteHorse)
+              }
+
+              toUnicorn(🐴) // 🦄
+            </code></pre>
           </section>
-        </section>
 
-        <section>
+          <section>
+            <h3>Pipeline</h3>
+            <p class="fragment"><code>pipe = (…fns) → (a) → b</code></p>
+            <pre class="fragment"><code class="ts" data-trim data-line-numbers="1|1-3,7|1-4,7|1-5,7|1-7|all">
+              import { pipe } from 'ramda' // or: 'lodash/fp'
+
+              const toUnicorn = (horse) => pipe(
+                (horse) => paint(🥛, horse),
+                (whiteHorse) => attach(🐚, whiteHorse),
+                (hornedWhiteHorse) => feed(🌈, ✨, hornedWhiteHorse)
+              )(horse)
+
+              toUnicorn(🐴) // 🦄
+            </code></pre>
+          </section>
+
+          <section>
+            <h3>Curried functions</h3>
+            <p class="fragment fade-in-then-out" style="text-align: left">
+              …the technique of converting a function that takes multiple arguments into a sequence of functions that
+              each take a single argument.
+              <cite><a href="https://en.wikipedia.org/wiki/Currying" target="_blank">Wikipedia</a></cite>
+            </p>
+            <pre class="fragment" style="width: 100%"><code class="ts" data-trim data-line-numbers="1|1-2|1-4|all">
+              const curriedPaint = (color) => (thing) => paint(color, thing)
+              const curriedAttach = (item) => (thing) => attach(item, thing)
+              const curriedFeed = (food1) => (food2) => (thing)
+                => feed(food1, food2, thing)
+
+              const toUnicorn = (horse) => pipe(
+                curriedPaint(🥛),
+                curriedAttach(🐚),
+                curriedFeed(🌈)(✨)
+              )(horse)
+
+              toUnicorn(🐴) // 🦄
+            </code></pre>
+          </section>
+
+          <section>
+            <h3 class="r-fit-text">Tacit (point-free) programming</h3>
+            <p class="fragment fade-in-then-out" style="text-align: left">
+              A style of programming where function arguments (<em>points</em>) are never explicitly referenced.
+            </p>
+            <pre
+              class="fragment fade-in-then-out"
+              style="width: 100%"
+            ><code class="ts" data-trim data-noescape data-line-numbers>
+              <br>
+              <br>
+              const curriedPaint = (color) => (thing) => paint(color, thing)
+              const curriedAttach = (item) => (thing) => attach(item, thing)
+              const curriedFeed = (food1) => (food2) => (thing)
+                => feed(food1, food2, thing)
+
+              const toUnicorn = (horse) => pipe(
+                curriedPaint(🥛),
+                curriedAttach(🐚),
+                curriedFeed(🌈)(✨)
+              )(horse)
+
+              toUnicorn(🐴) // 🦄
+            </code></pre>
+            <pre
+              class="fragment fade-in-then-out"
+              style="width: 100%"
+            ><code class="ts" data-trim data-noescape data-line-numbers>
+              <br>
+              <br>
+              const curriedPaint = (color) => (thing) => paint(color, thing)
+              const curriedAttach = (item) => (thing) => attach(item, thing)
+              const curriedFeed = (food1) => (food2) => (thing)
+                => feed(food1, food2, thing)
+
+              const toUnicorn = pipe(
+                curriedPaint(🥛),
+                curriedAttach(🐚),
+                curriedFeed(🌈)(✨)
+              )
+
+              toUnicorn(🐴) // 🦄
+            </code></pre>
+            <pre
+              class="fragment fade-in-then-out"
+              style="width: 100%"
+            ><code class="ts" data-trim data-noescape data-line-numbers>
+              import { curry } from 'ramda' // or: 'lodash/fp'
+
+              const curriedPaint = curry(paint)
+              const curriedAttach = curry(attach)
+              const curriedFeed = curry(feed)
+
+
+              const toUnicorn = pipe(
+                curriedPaint(🥛),
+                curriedAttach(🐚),
+                curriedFeed(🌈, ✨)
+              )
+
+              toUnicorn(🐴) // 🦄
+            </code></pre>
+            <pre class="fragment" style="width: 100%"><code class="ts" data-trim data-noescape data-line-numbers>
+              <br>
+              <br>
+              const paintWhite = paint(🥛)
+              const attachHorn = attach(🐚)
+              const feedMagicStuff = feed(🌈, ✨)
+
+
+              const toUnicorn = pipe(paintWhite, attachHorn, feedMagicStuff)
+
+
+
+
+
+              toUnicorn(🐴) // 🦄
+            </code></pre>
+          </section>
+
           <!--
-            Pass a value through multiple functions
-            Compose
-            Pipe
-            Pipeline operator?
-           -->
-        </section>
-
-        <section>
-          <!--
-            What's currying? (uses closures) (inventor: Haskell Curry)
-            Why currying? Reusability and readability (Angular animation example, RxJS?)
-            Difference with partial application
-            Ramda mixes currying with partial application
-            https://blog.bitsrc.io/understanding-currying-in-javascript-ceb2188c339
-           -->
-        </section>
-
-        <section>
-          <!--
-            Tacit (point-free) programming: explicitly referred arguments ("points")
-            ```
-            const getName = (person) => person.name
-            const people = [{ name: 'Hank' }, ...]
-            people.map((person) => getName(person))
-
-            // point-free:
-            people.map(getName)
-            ```
-            This doesn't always work (e.g. Number.parseInt())
-            Pipe() is already point-free
+            Point-free programming might be difficult (e.g. Number.parseInt())
             Using `this` makes it harder to be point-free
             https://medium.com/dailyjs/functional-js-7-point-free-style-b21a1416ac6a
+            https://wiki.haskell.org/Pointfree#Problems_with_pointfree
            -->
         </section>
 
         <section>
           <!--
+            Further reading:
+            * https://medium.com/dailyjs/functional-js-1-introduction-7908bfe5ef8d
+            * https://project-awesome.org/stoeffel/awesome-fp-js
+            * https://en.wikipedia.org/wiki/Tacit_programming
             Libs:
             * Ramda.js
             * Rambda https://selfrefactor.github.io/rambda/#/
@@ -220,10 +326,6 @@
             * https://sanctuary.js.org/
             * https://folktale.origamitower.com/ (more OO)
             * https://www.purescript.org/
-            Further reading:
-            * https://medium.com/dailyjs/functional-js-1-introduction-7908bfe5ef8d
-            * https://project-awesome.org/stoeffel/awesome-fp-js
-            * https://en.wikipedia.org/wiki/Tacit_programming
             Future subjects:
             * combinators
            -->
@@ -241,6 +343,7 @@
       // - https://revealjs.com/config/
       Reveal.initialize({
         hash: true,
+        slideNumber: true,
 
         // Learn about plugins: https://revealjs.com/plugins/
         plugins: [RevealMarkdown, RevealHighlight, RevealNotes],

@@ -35,3 +35,12 @@ $selectionBackgroundColor: #df5320;
 // Theme template ------------------------------
 @import "../template/theme";
 // ---------------------------------------------
+
+// overrides
+.fragment.fade-in-then-out:not(.current-fragment) {
+  display: none;
+}
+
+.reveal .hljs.has-highlights tr:not(.highlight-line) {
+  opacity: 0.1;
+}

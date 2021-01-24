@@ -293,3 +293,9 @@ section.has-light-background, section.has-light-background h1, section.has-light
 @media print {
   .backgrounds {
     background-color: #111; } }
+
+.fragment.fade-in-then-out:not(.current-fragment) {
+  display: none; }
+
+.reveal .hljs.has-highlights tr:not(.highlight-line) {
+  opacity: 0.1; }
