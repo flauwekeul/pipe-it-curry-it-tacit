@@ -38,7 +38,7 @@
         transform: skewX(-30deg);
         border-radius: 5px;
       }
-      .gradient-indicator {
+      .gradient-arrow {
         position: absolute;
         bottom: -9vmin;
         left: 0;
@@ -81,9 +81,9 @@
                 <span style="margin-bottom: 1rem">Declarative</span>
               </div>
               <div class="gradient-bar"></div>
-              <div class="gradient-indicator">⬆</div>
+              <div class="gradient-arrow">⬆</div>
             </div>
-            <pre class="fragment fade-in-then-out" data-indicator-left="5%"><code class="ts" data-trim>
+            <pre class="fragment fade-in-then-out" data-arrow-left="5%"><code class="ts" data-trim>
               const charCodes = [115, null, 104, 105, 116]
               let result = ''
 
@@ -97,7 +97,7 @@
 
               result // 'shit'
             </code></pre>
-            <pre class="fragment fade-in-then-out" data-indicator-left="40%"><code class="ts" data-trim>
+            <pre class="fragment fade-in-then-out" data-arrow-left="40%"><code class="ts" data-trim>
               const charCodes = [98, 101, 116, 116, 101, null, 114]
               const result = charCodes
                 .filter((charCode) => charCode)
@@ -106,7 +106,7 @@
 
               result // 'better'
             </code></pre>
-            <pre class="fragment fade-in-then-out" data-indicator-left="75%"><code class="ts" data-trim>
+            <pre class="fragment fade-in-then-out" data-arrow-left="75%"><code class="ts" data-trim>
               const charCodes = [98, 101, null, 115, 116]
               const makeWord = pipe(
                 reject(isNil),
@@ -116,7 +116,7 @@
 
               makeWord(charCodes) // 'best'
             </code></pre>
-            <pre class="fragment fade-in-then-out" data-indicator-left="95%"><code class="ts" data-trim>
+            <pre class="fragment fade-in-then-out" data-arrow-left="95%"><code class="ts" data-trim>
               const incCount = ifElse(
                 has('count'),
                 over(lensProp('count'), inc),
@@ -128,10 +128,10 @@
           </section>
 
           <section>
-            <h2 class="r-fit-text">
+            <h3 class="r-fit-text">
               Familiarity can be acquired;<br />complexity is intrinsic.
               <cite><a href="https://sanctuary.js.org/#section:currying" target="_blank">sanctuary.js</a></cite>
-            </h2>
+            </h3>
           </section>
 
           <!-- <section>
@@ -304,21 +304,20 @@
               toUnicorn(🐴) // 🦄
             </code></pre>
           </section>
+        </section>
 
+        <section>
           <!--
             Point-free programming might be difficult (e.g. Number.parseInt())
             Using `this` makes it harder to be point-free
             https://medium.com/dailyjs/functional-js-7-point-free-style-b21a1416ac6a
             https://wiki.haskell.org/Pointfree#Problems_with_pointfree
-           -->
-        </section>
 
-        <section>
-          <!--
             Further reading:
             * https://medium.com/dailyjs/functional-js-1-introduction-7908bfe5ef8d
             * https://project-awesome.org/stoeffel/awesome-fp-js
             * https://en.wikipedia.org/wiki/Tacit_programming
+
             Libs:
             * Ramda.js
             * Rambda https://selfrefactor.github.io/rambda/#/
@@ -326,6 +325,7 @@
             * https://sanctuary.js.org/
             * https://folktale.origamitower.com/ (more OO)
             * https://www.purescript.org/
+
             Future subjects:
             * combinators
            -->
@@ -354,29 +354,29 @@
         return val
       }
       const find = (fn) => (array) => array.find(fn)
-      const some = (fn) => (array) => array.some(fn)
       const pipe = (...fns) => (val) => fns.reduce((acc, fn) => fn(acc), val)
       const getDataFor = (key) => (el) => el.dataset[key]
       const isVisible = (el) => el.classList.contains('current-fragment')
       const setStyle = (el) => (prop) => (value) => (el.style[prop] = value)
 
-      const gradientIndicator = document.getElementsByClassName('gradient-indicator')[0]
-      const codeSnippets = [...document.querySelectorAll('[data-indicator-left]')]
-      const getGradientValue = getDataFor('indicatorLeft')
-      const setIndicatorStyle = setStyle(gradientIndicator)
-      const setIndicatorStyleLeft = pipe(find(isVisible), getGradientValue, setIndicatorStyle('left'))
+      const arrow = document.querySelector('.gradient-arrow')
+      const codeSnippets = [...document.querySelectorAll('[data-arrow-left]')]
+      const setArrowStyle = setStyle(arrow)
+      const setArrowOpacity = setArrowStyle('opacity')
+      const setArrowPosition = pipe(getDataFor('arrowLeft'), setArrowStyle('left'))
 
-      const updateIndicatorStyle = () => {
-        if (some(isVisible)(codeSnippets)) {
-          setIndicatorStyle('opacity')(1)
-          setIndicatorStyleLeft(codeSnippets)
+      const updateArrowStyle = () => {
+        const activeCodeSnippet = find(isVisible)(codeSnippets)
+        if (activeCodeSnippet) {
+          setArrowOpacity(1)
+          setArrowPosition(activeCodeSnippet)
           return
         }
-        setIndicatorStyle('opacity')(0)
+        setArrowOpacity(0)
       }
 
-      Reveal.on('fragmentshown', updateIndicatorStyle)
-      Reveal.on('fragmenthidden', updateIndicatorStyle)
+      Reveal.on('fragmentshown', updateArrowStyle)
+      Reveal.on('fragmenthidden', updateArrowStyle)
     </script>
   </body>
 </html>
