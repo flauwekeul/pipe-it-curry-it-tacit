@@ -24,6 +24,13 @@
         font-style: italic;
       }
 
+      mark {
+        background-color: var(--selection-background-color);
+      }
+      mark > * {
+        color: var(--selection-color) !important;
+      }
+
       .gradient-text {
         background-image: var(--gradient);
         -webkit-background-clip: text;
@@ -40,7 +47,7 @@
       }
       .gradient-arrow {
         position: absolute;
-        bottom: -9vmin;
+        top: 8vmin;
         left: 0;
         font-size: 10vmin;
         transform: translateX(-50%);
@@ -90,8 +97,62 @@
               </div>
               <div class="gradient-bar"></div>
               <div class="gradient-arrow">⬆</div>
+              <!-- todo: reduce code duplication -->
+              <div class="fragment fade-in-then-out">
+                <div style="display: flex; justify-content: space-between">
+                  <ul style="list-style: none; margin: 2rem 0 0">
+                    <li>Concerned with <em>how</em></li>
+                  </ul>
+                  <ul style="list-style: none; margin: 2rem 0 0; text-align: right; width: 50%">
+                    <li>Concerned with <em>what</em></li>
+                  </ul>
+                </div>
+              </div>
+              <div class="fragment fade-in-then-out">
+                <div style="display: flex; justify-content: space-between">
+                  <ul style="list-style: none; margin: 2rem 0 0">
+                    <li>Concerned with <em>how</em></li>
+                    <li>Implementation details</li>
+                  </ul>
+                  <ul style="list-style: none; margin: 2rem 0 0; text-align: right; width: 50%">
+                    <li>Concerned with <em>what</em></li>
+                    <li>Abstraction</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="fragment fade-in-then-out">
+                <div style="display: flex; justify-content: space-between">
+                  <ul style="list-style: none; margin: 2rem 0 0">
+                    <li>Concerned with <em>how</em></li>
+                    <li>Implementation details</li>
+                    <li>Statements</li>
+                  </ul>
+                  <ul style="list-style: none; margin: 2rem 0 0; text-align: right; width: 50%">
+                    <li>Concerned with <em>what</em></li>
+                    <li>Abstraction</li>
+                    <li>Expressions</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="fragment fade-in-then-out">
+                <div style="display: flex; justify-content: space-between">
+                  <ul style="list-style: none; margin: 2rem 0 0">
+                    <li>Concerned with <em>how</em></li>
+                    <li>Implementation details</li>
+                    <li>Statements</li>
+                    <li>Requires <em>reading</em></li>
+                  </ul>
+                  <ul style="list-style: none; margin: 2rem 0 0; text-align: right; width: 50%">
+                    <li>Concerned with <em>what</em></li>
+                    <li>Abstraction</li>
+                    <li>Expressions</li>
+                    <li>Requires <em>knowledge</em></li>
+                  </ul>
+                </div>
+              </div>
             </div>
-            <pre class="fragment fade-in-then-out" data-arrow-left="5%"><code class="ts" data-trim>
+
+            <pre class="fragment fade-in-then-out" data-arrow-left="5%"><code class="ts" data-trim data-noescape>
               const charCodes = [115, null, 104, 105, 116]
               let result = ''
 
@@ -103,28 +164,28 @@
                 result += String.fromCharCode(charCode)
               }
 
-              result // 'shit'
+              result // <mark>'shit'</mark>
             </code></pre>
-            <pre class="fragment fade-in-then-out" data-arrow-left="40%"><code class="ts" data-trim>
+            <pre class="fragment fade-in-then-out" data-arrow-left="40%"><code class="ts" data-trim data-noescape>
               const charCodes = [98, 101, 116, 116, 101, null, 114]
               const result = charCodes
                 .filter((charCode) => charCode)
                 .map((charCode) => String.fromCharCode(charCode))
                 .join('')
 
-              result // 'better'
+              result // <mark>'better'</mark>
             </code></pre>
-            <pre class="fragment fade-in-then-out" data-arrow-left="75%"><code class="ts" data-trim>
-              const charCodes = [98, 101, null, 115, 116]
+            <pre class="fragment fade-in-then-out" data-arrow-left="70%"><code class="ts" data-trim data-noescape>
+              const charCodes = [110, 105, null, 99, 101]
               const makeWord = pipe(
                 reject(isNil),
                 map(String.fromCharCode),
                 join('')
               )
 
-              makeWord(charCodes) // 'best'
+              makeWord(charCodes) // <mark>'nice'</mark>
             </code></pre>
-            <pre class="fragment fade-in-then-out" data-arrow-left="95%"><code class="ts" data-trim>
+            <pre class="fragment fade-in-then-out" data-arrow-left="95%"><code class="ts" data-trim data-noescape>
               const incCount = ifElse(
                 has('count'),
                 over(lensProp('count'), inc),
@@ -135,63 +196,41 @@
             </code></pre>
           </section>
 
-          <section>
+          <!-- <section>
+            <aside class="notes">
+              <p>Comparable: estimating a BE story when you're a FE dev</p>
+            </aside>
+
             <h3 class="r-fit-text">
               Familiarity can be acquired;<br />complexity is intrinsic.
               <cite><a href="https://sanctuary.js.org/#section:currying" target="_blank">sanctuary.js</a></cite>
             </h3>
-          </section>
-
-          <!-- <section>
-            <h3>Assumptions</h3>
-            <ul>
-              <li class="fragment">
-                Functions are <em>first-class</em>. They can be…
-                <ul>
-                  <li class="fragment">
-                    …stored in a variable
-                    <pre><code class="ts" data-trim>
-                      const fn = () => { … }
-                    </code></pre>
-                  </li>
-                  <li class="fragment">
-                    …passed as an argument
-                    <pre><code class="ts" data-trim>
-                      const fn = (callback) => {
-                        …
-                        callback()
-                      }
-                    </code></pre>
-                  </li>
-                  <li class="fragment">
-                    …returned from a function
-                    <pre class="fragment fade-in-then-out"><code class="ts" data-trim>
-                      const fn = () => {
-                        return () => { … }
-                      }
-                    </code></pre>
-                    <pre class="fragment"><code class="ts" data-trim>
-                      const fn = () => () => { … }
-                    </code></pre>
-                  </li>
-                </ul>
-              </li>
-            </ul>
           </section> -->
         </section>
 
         <section>
           <section>
             <h3>Equine alchemy</h3>
-            <pre class="fragment"><code class="ts" data-trim data-line-numbers="1,5|1-2,5|1-3,5|1-5|all">
-              const toUnicorn = (horse) => {
-                const whiteHorse = paint(🥛, horse)
-                const hornedWhiteHorse = attach(🐚, whiteHorse)
-                return feed(🌈, ✨, hornedWhiteHorse)
-              }
+            <div class="fragment">
+              Starting code:
+              <pre><code class="ts" data-trim data-line-numbers="1,5|1-2,5|1-3,5|1-5|all">
+                const toUnicorn = (horse) => {
+                  const whiteHorse = paint(🥛, horse)
+                  const hornedWhiteHorse = attach(🐚, whiteHorse)
+                  return feed(🌈, ✨, hornedWhiteHorse)
+                }
 
-              toUnicorn(🐴) // 🦄
-            </code></pre>
+                toUnicorn(🐴) // 🦄
+              </code></pre>
+            </div>
+            <div class="fragment">
+              End result:
+              <pre><code class="ts" data-trim data-noescape data-line-numbers>
+                const toUnicorn = pipe(paint(🥛), attach(🐚), feed(🌈, ✨))
+
+                toUnicorn(🐴) // 🦄
+              </code></pre>
+            </div>
           </section>
 
           <section>
@@ -211,12 +250,12 @@
           </section>
 
           <section>
-            <h3>Curried functions</h3>
-            <p class="fragment fade-in-then-out" style="text-align: left">
+            <h3>Currying</h3>
+            <!-- <p class="fragment fade-in-then-out" style="text-align: left">
               …the technique of converting a function that takes multiple arguments into a sequence of functions that
               each take a single argument.
               <cite><a href="https://en.wikipedia.org/wiki/Currying" target="_blank">Wikipedia</a></cite>
-            </p>
+            </p> -->
             <pre class="fragment" style="width: 100%"><code class="ts" data-trim data-line-numbers="1|1-2|1-4|all">
               const curriedPaint = (color) => (thing) => paint(color, thing)
               const curriedAttach = (item) => (thing) => attach(item, thing)
@@ -233,11 +272,11 @@
             </code></pre>
           </section>
 
-          <section>
+          <section class="r-stretch">
             <h3 class="r-fit-text">Tacit (point-free) programming</h3>
-            <p class="fragment fade-in-then-out" style="text-align: left">
+            <!-- <p class="fragment fade-in-then-out" style="text-align: left">
               A style of programming where function arguments (<em>points</em>) are never explicitly referenced.
-            </p>
+            </p> -->
             <pre
               class="fragment fade-in-then-out"
               style="width: 100%"
@@ -295,26 +334,48 @@
 
               toUnicorn(🐴) // 🦄
             </code></pre>
-            <pre class="fragment" style="width: 100%"><code class="ts" data-trim data-noescape data-line-numbers>
-              <br>
-              <br>
-              const paintWhite = paint(🥛)
-              const attachHorn = attach(🐚)
-              const feedMagicStuff = feed(🌈, ✨)
+            <pre
+              class="fragment fade-in-then-out"
+              style="width: 100%"
+            ><code class="ts" data-trim data-noescape data-line-numbers>
+              import { curry } from 'ramda' // or: 'lodash/fp'
+
+              const paint = curry((color, thing) => /* paint thing */)
+              const attach = curry((item, thing) => /* attach thing */)
+              const feed = curry((food1, food2, thing) => /* feed thing */)
 
 
-              const toUnicorn = pipe(paintWhite, attachHorn, feedMagicStuff)
-
-
-
-
+              const toUnicorn = pipe(
+                paint(🥛),
+                attach(🐚),
+                feed(🌈, ✨)
+              )
 
               toUnicorn(🐴) // 🦄
             </code></pre>
+            <div class="fragment">
+              Starting code:
+              <pre style="width: 100%"><code class="ts" data-trim data-line-numbers>
+                const toUnicorn = (horse) => {
+                  const whiteHorse = paint(🥛, horse)
+                  const hornedWhiteHorse = attach(🐚, whiteHorse)
+                  return feed(🌈, ✨, hornedWhiteHorse)
+                }
+
+                toUnicorn(🐴) // 🦄
+              </code></pre>
+              End result:
+              <pre style="width: 100%"><code class="ts" data-trim data-noescape data-line-numbers>
+                const toUnicorn = pipe(paint(🥛), attach(🐚), feed(🌈, ✨))
+
+                toUnicorn(🐴) // 🦄
+              </code></pre>
+            </div>
           </section>
         </section>
 
         <section>
+          <h2 class="gradient-text">Questions?</h2>
           <!--
             Point-free programming might be difficult (e.g. Number.parseInt())
             Using `this` makes it harder to be point-free
